@@ -1,0 +1,1 @@
+This folder contains the codes of the support functions used in this project's backend .
