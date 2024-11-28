@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Dataset{% endblock %}
+
+{% block content %}
+
+<link href="{{ url_for('static', filename='add_dataset.css') }}" rel="stylesheet" />
+
+<div class="main-container">
+  <div class="form-container">
+    <div class="addmachine-container02">
+      <h1 class="addmachine-hero-heading heading1">
+        Dataset Details
+      </h1>
+    </div>
+
+    <div class="guidelines-section">
+      <label>Guidelines</label>
+      <span class="tooltip-icon">i
+        <span class="tooltip-text">
+          We currently only support labelled datasets.
+          <br></br>
+          Required Columns:
+          <br></br>
+          The dataset should include either:
+          <br>
+          an "rul" (Remaining Useful Life) column
+          <br>
+          OR
+          <br>
+          both a "unit number" and "time cycle unit" column.
+          <br></br>
+          Column Order:
+          <br></br>
+          If the dataset contains an "rul" column, it must be placed as the last column in the dataset.
+          <br></br>
+          If the dataset includes both "unit number" and "time cycle unit":
+          <br>
+          "unit number" should be the first column.
+          <br>
+          "time cycle unit" should be the second column.
+          <br></br>
+          If the dataset contains only "rul" and "time cycle unit" (without "unit number"):
+          <br>
+          "time cycle unit" should be the first column.
+          <br></br>
+          These requirements ensure a standardized dataset structure to facilitate efficient processing and model training.
+        </span>
+      </span>
+    </div>
+    <br>
+
+    {% if not file_uploaded %}
+    <form method="post" enctype="multipart/form-data">
+      <label for="file-upload">Upload a file:</label>
+      <input type="file" accept=".csv, .txt, .mat, .xlsx" name="file" />
+      <button class="addmachine-hero-button1 buttonFilled" type="submit">Upload</button>
+    </form>
+    <br /><br />
+    {% endif %}
+
+    {% if file_uploaded %}
+    <form method="post">
+      <!-- Dropdown 1 -->
+      <label for="datasetName">Dataset Name:</label>
+      <input required type="text" id="datasetName" name="datasetName"/>
+      <br/><br />
+
+      <label for="rulUnit">RUL Unit:</label>
+      <input required type="text" id="rulUnit" name="rulUnit"/>
+      <br/><br />
+
+      <!-- Checkboxes -->
+      <div id="categorical-features-box">
+        <label>Select Numeric-Categorical Features:</label>
+        <span class="tooltip-icon">?
+          <span class="tooltip-text">
+            Numerical-categorical features are columns that contain numbers but, instead of representing continuous measurements, they indicate different levels or categories.
+            <br><br>
+            For example:
+            <br>
+            Fan speed could have values like 1, 2, 3, 4, or 5. Each of these numbers represents a category of fan speed rather than a continuously varying measurement. In this case, the numbers aren’t measurements of quantity but rather labels for different settings. the estimated time or cycles remaining before each machine requires maintenance or is likely to fail.
+          </span>
+        </span>
+        <br>
+        {% for column in columns %}
+        <input type="checkbox" id="cat_{{ column }}" name="cat_{{ column }}" value="{{ column }}" />
+        <label for="cat_{{ column }}">{{ column }}</label><br />
+        {% endfor %}
+        <br /><br />
+    </div>
+    
+
+      <div id="dataset-options">
+        <label>Select Dataset Options:</label>
+        <span class="tooltip-icon">?
+          <span class="tooltip-text">
+            "rul" (Remaining Useful Life) column: This column should directly provide the estimated time or cycles remaining before each machine requires maintenance or is likely to fail.
+            <br><br>
+            The "time cycle unit" represents the time interval (or cycle) during which each row’s data was collected. Each row should capture the average readings over that interval, allowing for analysis over time.
+            <br><br>
+            The "unit number" uniquely identifies each machine or failure/restart cycle of the same machine. Each "unit number" value should represent a continuous period of machine operation, up until failure or shutdown for repair. If a machine has been restarted after maintenance, it should be assigned a new "unit number."
+            <br>
+            This allows us to distinguish data collected from different machines or different operating cycles of the same machine.
+          </span>
+        </span>
+        <br>
+    
+        <!-- Option 1 -->
+        <input type="radio" id="option1" name="dataset_option" value="unit_time_cycle">
+        <label for="option1">Dataset has Unit number and time cycle unit</label><br />
+        
+        <!-- Sub-option for Option 1 -->
+        <div id="option1-sub" style="margin-left: 20px;">
+            <input type="radio" id="option1_rul_yes" name="unit_time_cycle_rul" value="yes">
+            <label for="option1_rul_yes">Has RUL</label><br />
+            
+            <input type="radio" id="option1_rul_no" name="unit_time_cycle_rul" value="no">
+            <label for="option1_rul_no">Does not have RUL</label><br />
+        </div>
+        
+        <!-- Option 2 -->
+        <input type="radio" id="option2" name="dataset_option" value="rul_only">
+        <label for="option2">Dataset only has RUL</label><br />
+        
+        <!-- Sub-options for Option 2 -->
+        <div id="option2-sub" style="margin-left: 20px;">
+            <input type="checkbox" id="option2_unit_number" name="rul_only_unit_number" value="unit_number">
+            <label for="option2_unit_number">Has Unit number</label><br />
+            
+            <input type="checkbox" id="option2_time_cycle_unit" name="rul_only_time_cycle_unit" value="time_cycle_unit">
+            <label for="option2_time_cycle_unit">Has time cycle unit</label><br />
+        </div>
+    </div>
+    
+
+      <!-- Add Button 1 -->
+      <button class="addmachine-hero-button1 buttonFilled" type="submit" id="add-button-1">Add</button>
+      <br /><br />
+    </form>
+
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const option1 = document.getElementById('option1');
+    const option2 = document.getElementById('option2');
+    const option1Sub = document.getElementById('option1-sub');
+    const option2Sub = document.getElementById('option2-sub');
+
+    option1.addEventListener('change', function () {
+        option1Sub.style.display = 'block';
+        option2Sub.style.display = 'none';
+    });
+
+    option2.addEventListener('change', function () {
+        option1Sub.style.display = 'none';
+        option2Sub.style.display = 'block';
+    });
+});
+
+</script> 
+
+{% endblock %}

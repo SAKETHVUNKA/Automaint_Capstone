@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Predict{% endblock %}
+
+{% block content %}
+    <link href="{{ url_for('static', filename='predict.css') }}" rel="stylesheet" />
+
+    <div class="machine-hero heroContainer">
+        <h1>MQTT Topic Information</h1>
+        <p>Below you'll find the MQTT topic details, a download link for necessary keys, and demo code to get you started.</p>
+
+        <div class="notes-container">
+            <h2>MQTT Topic</h2>
+            <p><strong>Topic:</strong> {{ mqtt_topic }}</p>
+        </div>
+
+        <div class="notes-container">
+            <h2>Download Keys</h2>
+            <p>Download the necessary keys for access: <a href="https://drive.google.com/file/d/1qJ2ynOpMVW_rig6cxzGKyfMqmECwdMJe/view?usp=sharing" class="btn btn-primary">🔐</a>
+                <span class="tooltip-icon">i
+                    <span class="tooltip-text">
+                      Extract these keys in the same folder as your code. It contains the following files: AmazonRootCA1.pem, c19f51462fdf185641cf60a5d59af25e44e3a749c1d5fb5a6d709fe23105daa1-certificate.pem.crt, c19f51462fdf185641cf60a5d59af25e44e3a749c1d5fb5a6d709fe23105daa1-private.pem.key
+                    </span>
+                  </span>
+                </p>
+            
+        </div>
+
+        <div class="notes-container">
+            <h2>Demo Code</h2>
+            <pre><code>
+        from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
+        import json
+        import pandas as pd
+        from datetime import datetime
+                
+        # MQTT connection details
+        CLIENT_ID = "{{user_id}}_{{machine_id}}"
+        ENDPOINT = "a32052tf0w5nxl-ats.iot.ap-south-1.amazonaws.com"
+        TOPIC = "enter the topic displayed on the page"
+        CERT_PATH = "./c19f51462fdf185641cf60a5d59af25e44e3a749c1d5fb5a6d709fe23105daa1-certificate.pem.crt"
+        KEY_PATH = "./c19f51462fdf185641cf60a5d59af25e44e3a749c1d5fb5a6d709fe23105daa1-private.pem.key"
+        ROOT_CA_PATH = "./AmazonRootCA1.pem"
+                
+        # Initialize MQTT client
+        mqtt_client = AWSIoTMQTTClient(CLIENT_ID)
+        mqtt_client.configureEndpoint(ENDPOINT, 8883)
+        mqtt_client.configureCredentials(ROOT_CA_PATH, KEY_PATH, CERT_PATH)
+        mqtt_client.configureOfflinePublishQueueing(-1)  # Infinite offline publish queueing
+        mqtt_client.configureDrainingFrequency(2)  # Draining frequency for publish queueing
+        mqtt_client.configureConnectDisconnectTimeout(30)  # 10 sec
+        mqtt_client.configureMQTTOperationTimeout(15)  # 5 sec
+                
+        # Connect to the MQTT broker
+        mqtt_client.connect()
+        print("Connected to MQTT broker.")
+            
+        row = # Assign it to 1 cycle sensor data [make sure there are no null values]
+                
+        payload = row.to_dict()  # Convert row to dictionary format
+        mqtt_client.publish(TOPIC, json.dumps(payload), 1)
+        print("Message published:", payload)
+                
+        print("All messages sent!")
+        mqtt_client.disconnect()
+            </code></pre>
+        </div>
+    </div>
+{% endblock %}

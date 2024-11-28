@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+      data-tag="font"
+    />
+    <link href="{{ url_for('static', filename='base.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div>
+      <div class="home-container">
+        <div class="home-header">
+          <header
+            data-thq="thq-navbar"
+            class="navbarContainer home-navbar-interactive"
+          >
+            <span class="logo" onclick="window.location.href=`{{ url_for('index') }}`">Auto Maint</span>
+            <div data-thq="thq-navbar-nav" class="home-desktop-menu">
+              <nav class="home-links"></nav>
+              <div class="home-buttons">
+                <!-- <button onclick="window.location.href='{{ url_for('login') }}'" class="home-login buttonFlat">Login</button>
+                <button onclick="window.location.href='{{ url_for('register') }}'" class="buttonFilled">Register</button> -->
+                {% if 'user_id' in session %}
+                  <button onclick="window.location.href=`{{ url_for('dashboard') }}`" class="home-logout buttonFlat">Dashboard</button>
+                  <button onclick="window.location.href=`{{ url_for('logout') }}`" class="home-logout buttonFlat">Logout</button>
+                {% else %}
+                  <button onclick="window.location.href=`{{ url_for('login') }}`" class="home-login buttonFlat">Login</button>
+                  <button onclick="window.location.href=`{{ url_for('register') }}`" class="buttonFilled">Register</button>
+                {% endif %}
+              </div>
+            </div>
+          </header>
+        </div>
+
+        {% block content %}{% endblock %}
+
+        <div class="home-footer">
+          <footer class="footerContainer home-footer1">
+            <div class="home-container31">
+              <span class="logo">Auto maint</span>
+              <nav class="home-nav1">
+                <span class="bodySmall">Home</span>
+                <span class="home-nav221 bodySmall">About</span>
+                <span class="home-nav321 bodySmall">Features</span>
+                <span class="home-nav421 bodySmall">Contact</span>
+                <span class="home-nav521 bodySmall">Blog</span>
+              </nav>
+            </div>
+            <div class="home-separator"></div>
+            <div class="home-container32">
+              <span class="bodySmall home-text89">
+                © 2024 AutoMaint, All Rights Reserved.
+              </span>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+    <script
+      data-section-id="navbar"
+      src="https://unpkg.com/@teleporthq/teleport-custom-scripts"
+    ></script>
+  </body>
+</html>

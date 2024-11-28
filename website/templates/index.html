@@ -1,0 +1,413 @@
+{% extends 'base.html' %}
+
+{% block title %}AutoMaint{% endblock %}
+
+{% block content %}
+<link href="{{ url_for('static', filename='index.css') }}" rel="stylesheet" />
+
+ <div class="home-hero">
+          <div class="heroContainer home-hero1">
+            <div class="home-container01">
+              <h1 class="home-hero-heading heading1">
+                Revolutionize Your Maintenance Process
+              </h1>
+              <span class="home-hero-sub-heading bodyLarge">
+                <span>
+                  <span>
+                    <span>
+                      Empowering you to predict machine failures before they
+                      happen
+                    </span>
+                    <span></span>
+                  </span>
+                  <span>
+                    <span></span>
+                    <span></span>
+                  </span>
+                </span>
+                <span>
+                  <span>
+                    <span></span>
+                    <span></span>
+                  </span>
+                  <span>
+                    <span></span>
+                    <span></span>
+                  </span>
+                </span>
+              </span>
+              <div class="home-btn-group">
+                <button class="buttonFilled" onclick="window.location.href=`{{ url_for('register') }}`">Get Started Now</button>
+                <button class="buttonFlat">Learn More&nbsp;→</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="home-features">
+          <div class="featuresContainer">
+            <div class="home-features1">
+              <div class="home-container02">
+                <span class="overline">
+                  <span>features</span>
+                  <br />
+                </span>
+                <h2 class="home-features-heading heading2">Our Key Features</h2>
+                <span class="home-features-sub-heading bodyLarge">
+                  <span>
+                    <span>
+                      <span>
+                        Empowering you with cutting-edge tools for effective
+                        predictive maintenance
+                      </span>
+                      <span></span>
+                    </span>
+                    <span>
+                      <span></span>
+                      <span></span>
+                    </span>
+                  </span>
+                  <span>
+                    <span>
+                      <span></span>
+                      <span></span>
+                    </span>
+                    <span>
+                      <span></span>
+                      <span></span>
+                    </span>
+                  </span>
+                </span>
+              </div>
+              <div class="home-container03">
+                <div class="featuresCard feature-card-feature-card">
+                  <svg viewBox="0 0 1024 1024" class="featuresIcon">
+                    <path
+                      d="M809.003 291.328l-297.003 171.819-297.003-171.819 275.456-157.397c4.779-2.731 9.899-4.48 15.147-5.333 9.301-1.451 18.987 0.128 27.904 5.291zM491.776 979.669c6.016 3.243 12.928 5.077 20.224 5.077 7.381 0 14.336-1.877 20.395-5.163 15.189-2.475 29.909-7.68 43.392-15.36l298.709-170.709c26.368-15.232 45.269-38.315 55.424-64.597 5.675-14.592 8.619-30.165 8.747-46.251v-341.333c0-20.395-4.821-39.723-13.397-56.917-0.939-3.029-2.219-5.973-3.883-8.832-1.963-3.371-4.267-6.357-6.912-8.96-1.323-1.835-2.731-3.669-4.139-5.419-9.813-12.203-21.845-22.528-35.456-30.507l-299.051-170.88c-26.027-15.019-55.467-19.84-83.328-15.531-15.531 2.432-30.507 7.637-44.288 15.488l-298.709 170.709c-16.341 9.429-29.824 21.888-40.149 36.267-2.56 2.56-4.864 5.547-6.784 8.832-1.664 2.901-2.987 5.888-3.925 8.96-1.707 3.456-3.243 6.955-4.608 10.496-5.632 14.635-8.576 30.208-8.704 45.995v341.632c0.043 30.293 10.581 58.197 28.331 80.128 9.813 12.203 21.845 22.528 35.456 30.507l299.051 170.88c13.824 7.979 28.587 13.099 43.605 15.445zM469.333 537.045v340.949l-277.12-158.336c-4.736-2.773-8.832-6.315-12.16-10.411-5.931-7.381-9.387-16.512-9.387-26.581v-318.379zM554.667 877.995v-340.949l298.667-172.757v318.379c-0.043 5.163-1.067 10.496-2.987 15.445-3.413 8.789-9.6 16.384-18.176 21.333z"
+                    ></path>
+                  </svg>
+                  <div class="feature-card-container">
+                    <h3 class="feature-card-text heading3">
+                      <span>Machine Learning Algorithms</span>
+                    </h3>
+                    <span class="bodySmall">
+                      <span>
+                        Utilize advanced machine learning algorithms to predict
+                        machine failures
+                      </span>
+                    </span>
+                  </div>
+                </div>
+                <div class="featuresCard feature-card-feature-card">
+                  <svg viewBox="0 0 1024 1024" class="featuresIcon">
+                    <path
+                      d="M809.003 291.328l-297.003 171.819-297.003-171.819 275.456-157.397c4.779-2.731 9.899-4.48 15.147-5.333 9.301-1.451 18.987 0.128 27.904 5.291zM491.776 979.669c6.016 3.243 12.928 5.077 20.224 5.077 7.381 0 14.336-1.877 20.395-5.163 15.189-2.475 29.909-7.68 43.392-15.36l298.709-170.709c26.368-15.232 45.269-38.315 55.424-64.597 5.675-14.592 8.619-30.165 8.747-46.251v-341.333c0-20.395-4.821-39.723-13.397-56.917-0.939-3.029-2.219-5.973-3.883-8.832-1.963-3.371-4.267-6.357-6.912-8.96-1.323-1.835-2.731-3.669-4.139-5.419-9.813-12.203-21.845-22.528-35.456-30.507l-299.051-170.88c-26.027-15.019-55.467-19.84-83.328-15.531-15.531 2.432-30.507 7.637-44.288 15.488l-298.709 170.709c-16.341 9.429-29.824 21.888-40.149 36.267-2.56 2.56-4.864 5.547-6.784 8.832-1.664 2.901-2.987 5.888-3.925 8.96-1.707 3.456-3.243 6.955-4.608 10.496-5.632 14.635-8.576 30.208-8.704 45.995v341.632c0.043 30.293 10.581 58.197 28.331 80.128 9.813 12.203 21.845 22.528 35.456 30.507l299.051 170.88c13.824 7.979 28.587 13.099 43.605 15.445zM469.333 537.045v340.949l-277.12-158.336c-4.736-2.773-8.832-6.315-12.16-10.411-5.931-7.381-9.387-16.512-9.387-26.581v-318.379zM554.667 877.995v-340.949l298.667-172.757v318.379c-0.043 5.163-1.067 10.496-2.987 15.445-3.413 8.789-9.6 16.384-18.176 21.333z"
+                    ></path>
+                  </svg>
+                  <div class="feature-card-container">
+                    <h3 class="feature-card-text heading3">
+                      <span>Real-time Monitoring</span>
+                    </h3>
+                    <span class="bodySmall">
+                      <span>
+                        Monitor machine health in real-time to prevent
+                        unexpected breakdowns
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="home-pricing">
+          <div class="pricingContainer">
+            <div class="home-container04">
+              <span class="overline">
+                <span>Pricing</span>
+                <br />
+              </span>
+              <h2 class="heading2">Choose Your Plan</h2>
+              <span class="home-pricing-sub-heading bodyLarge">
+                <span>
+                  <span>
+                    Select the plan that best fits your predictive maintenance
+                    needs
+                  </span>
+                </span>
+              </span>
+            </div>
+            <div class="home-container05">
+              <div class="freePricingCard home-pricing-card">
+                <div class="home-container06">
+                  <span class="home-text36 heading3">Free</span>
+                  <span class="bodySmall">
+                    Get started with basic predictive maintenance for free
+                  </span>
+                </div>
+                <div class="home-container07">
+                  <span class="home-text37">
+                    <span>$</span>
+                    <span></span>
+                  </span>
+                  <span class="home-free-plan-price">0</span>
+                </div>
+                <div class="home-container08">
+                  <div class="home-container09">
+                    <span class="home-text40">✔</span>
+                    <span class="bodySmall">
+                      Access to basic predictive maintenance tools
+                    </span>
+                  </div>
+                  <div class="home-container10">
+                    <span class="home-text41">✔</span>
+                    <span class="bodySmall">
+                      Limited machine monitoring capabilities
+                    </span>
+                  </div>
+                  <div class="home-container11">
+                    <span class="home-text42">✔</span>
+                    <span class="bodySmall">
+                      Email notifications for maintenance alerts
+                    </span>
+                  </div>
+                  <div class="home-container12">
+                    <span class="home-text43">✔</span>
+                    <span class="bodySmall">Community support</span>
+                  </div>
+                </div>
+                <button class="home-button buttonOutline">
+                  Continue with Free
+                </button>
+              </div>
+              <div class="basicPricingCard home-pricing-card1">
+                <div class="home-container13">
+                  <span class="home-text44 heading3">BASIC</span>
+                  <span class="bodySmall">
+                    Upgrade to unlock more features and advanced tools
+                  </span>
+                </div>
+                <div class="home-container14">
+                  <span class="home-text45">
+                    <span>$</span>
+                    <span></span>
+                  </span>
+                  <span class="home-basic-plan-pricing">29</span>
+                  <span class="home-text48">/ month</span>
+                </div>
+                <div class="home-container15">
+                  <div class="home-container16">
+                    <span class="home-text49">✔</span>
+                    <span class="bodySmall">All features of FREE plan</span>
+                  </div>
+                  <div class="home-container17">
+                    <span class="home-text51">✔</span>
+                    <span class="bodySmall">
+                      Advanced machine monitoring and analysis
+                    </span>
+                  </div>
+                  <div class="home-container18">
+                    <span class="home-text52">✔</span>
+                    <span class="bodySmall">
+                      Customizable maintenance schedules
+                    </span>
+                  </div>
+                  <div class="home-container19">
+                    <span class="home-text53">✔</span>
+                    <span class="bodySmall">
+                      SMS notifications for maintenance alerts
+                    </span>
+                  </div>
+                  <div class="home-container20">
+                    <span class="home-text54">✔</span>
+                    <span class="bodySmall">Priority email support</span>
+                  </div>
+                </div>
+                <button class="home-button1 buttonFilledSecondary">
+                  Try the Basic plan
+                </button>
+              </div>
+              <div class="proPricingCard home-pricing-card2">
+                <div class="home-container21">
+                  <span class="home-text55 heading3">
+                    <span>PRO</span>
+                    <br />
+                  </span>
+                  <span class="bodySmall">
+                    Go pro for full access to all predictive maintenance
+                    features
+                  </span>
+                </div>
+                <div class="home-container22">
+                  <span class="home-text58">
+                    <span>$</span>
+                    <span></span>
+                  </span>
+                  <span class="home-pro-plan-pricing">59</span>
+                  <span class="home-text61">/ month</span>
+                </div>
+                <div class="home-container23">
+                  <div class="home-container24">
+                    <span class="home-text62">✔</span>
+                    <span class="bodySmall">
+                      &nbsp;All features of BASIC plan
+                    </span>
+                  </div>
+                  <div class="home-container25">
+                    <span class="home-text64">✔</span>
+                    <span class="bodySmall">
+                      Full access to all predictive maintenance tools
+                    </span>
+                  </div>
+                  <div class="home-container26">
+                    <span class="home-text65">✔</span>
+                    <span class="bodySmall">
+                      Real-time machine health monitoring
+                    </span>
+                  </div>
+                  <div class="home-container27">
+                    <span class="home-text66">✔</span>
+                    <span class="bodySmall">
+                      Customizable reporting and analytics
+                    </span>
+                  </div>
+                  <div class="home-container28">
+                    <span class="home-text67">✔</span>
+                    <span class="bodySmall">24/7 priority support</span>
+                  </div>
+                </div>
+                <button class="home-button2 buttonFilledSecondary">
+                  Try the PRO plan
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="home-banner">
+          <div class="bannerContainer home-banner1">
+            <h1 class="home-banner-heading heading2">
+              Welcome to Predictive Maintenance Solutions
+            </h1>
+            <span class="home-banner-sub-heading bodySmall">
+              <span>
+                <span>
+                  <span>
+                    Our platform utilizes cutting-edge technology to help you
+                    monitor the health of your machines and prevent unexpected
+                    breakdowns. With our user-friendly interface, you can easily
+                    analyze data and make informed decisions to optimize your
+                    maintenance strategy.
+                  </span>
+                  <span></span>
+                </span>
+                <span>
+                  <span></span>
+                  <span></span>
+                </span>
+              </span>
+              <span>
+                <span>
+                  <span></span>
+                  <span></span>
+                </span>
+                <span>
+                  <span></span>
+                  <span></span>
+                </span>
+              </span>
+            </span>
+            <button class="buttonFilled">Learn More</button>
+          </div>
+        </div>
+
+        <div class="home-faq">
+          <div class="faqContainer">
+            <div class="home-faq1">
+              <div class="home-container29">
+                <span class="overline">
+                  <span>FAQ</span>
+                  <br />
+                </span>
+                <h2 class="home-text85 heading2">Common questions</h2>
+                <span class="home-text86 bodyLarge">
+                  <span>
+                    Here are some of the most common questions that we get.
+                  </span>
+                  <br />
+                </span>
+              </div>
+              <div class="home-container30">
+                <div class="question-container">
+                  <span class="question-text heading3">
+                    <span>What is predictive maintenance?</span>
+                  </span>
+                  <span class="bodySmall">
+                    <span>
+                      Predictive maintenance is a proactive maintenance strategy
+                      that uses data analysis to predict when equipment failure
+                      might occur, allowing for timely maintenance to be
+                      performed.
+                    </span>
+                  </span>
+                </div>
+                <div class="question-container">
+                  <span class="question-text heading3">
+                    <span>
+                      How does our platform work for predictive maintenance?
+                    </span>
+                  </span>
+                  <span class="bodySmall">
+                    <span>
+                      Our platform utilizes machine learning algorithms to
+                      analyze data collected from machines, identify patterns,
+                      and predict potential issues before they occur, enabling
+                      users to take preventive actions.
+                    </span>
+                  </span>
+                </div>
+                <div class="question-container">
+                  <span class="question-text heading3">
+                    <span>Is the platform user-friendly?</span>
+                  </span>
+                  <span class="bodySmall">
+                    <span>
+                      Yes, our platform is designed to be user-friendly, making
+                      it easy for users to input data, monitor machine health,
+                      and receive maintenance recommendations.
+                    </span>
+                  </span>
+                </div>
+                <div class="question-container">
+                  <span class="question-text heading3">
+                    <span>
+                      What are the benefits of predictive maintenance?
+                    </span>
+                  </span>
+                  <span class="bodySmall">
+                    <span>
+                      Predictive maintenance helps reduce downtime, extend
+                      equipment lifespan, optimize maintenance schedules, and
+                      ultimately save costs by preventing unexpected failures.
+                    </span>
+                  </span>
+                </div>
+                <div class="question-container">
+                  <span class="question-text heading3">
+                    <span>
+                      Can I integrate our platform with existing systems?
+                    </span>
+                  </span>
+                  <span class="bodySmall">
+                    <span>
+                      Yes, our platform is designed to be easily integrated with
+                      existing systems and equipment, allowing for seamless data
+                      collection and analysis for predictive maintenance
+                      purposes.
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+{% endblock %}

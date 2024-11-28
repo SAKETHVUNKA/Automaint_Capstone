@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Machine{% endblock %}
+
+{% block content %}
+
+<link href="{{ url_for('static', filename='add_machine.css') }}" rel="stylesheet" />
+
+<div class="main-container">
+  <div class="form-container">
+    <div class="addmachine-container02">
+      <h1 class="addmachine-hero-heading heading1">
+        Machine Details
+      </h1>
+    </div>
+
+    <form method="post">
+      <!-- Dropdown 1 -->
+      <label for="machineName">Machine Name:</label>
+      <input required type="text" id="machineName" name="machineName"/>
+      <br/><br />
+
+      <!-- Add Button 1 -->
+       <div style="width: 100%; display: flex; justify-content: center;">
+         <button class="addmachine-hero-button1 buttonFilled" type="submit" id="add-button-1">Add</button>
+       </div>
+      <br /><br />
+    </form>
+  </div>
+</div>
+
+{% endblock %}

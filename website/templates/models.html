@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+
+{% block title %}Models{% endblock %}
+
+{% block content %}
+
+<link href="{{ url_for('static', filename='models.css') }}" rel="stylesheet" />
+
+<div class="table-container">
+    <h1>Models for {{ machine_name }}</h1>
+    <h1>Dataset: {{ dataset_name }}</h1>
+
+    <!-- Flash messages section -->
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <button type="button" style="margin-left: 65%;" onclick="window.location.href=`{{ url_for('train', machine_id=machine_id, dataset_id=dataset_id) }}`;" id="train-button" class="buttonFilled">Train Model</button>
+
+    <table class="model-table">
+        <thead>
+            <tr>
+                <th>Model Name</th>
+                <th>Model Type</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Display only the best model initially -->
+            <tr class="main-row">
+                <td>{{ best_model.user_given_name }}</td>
+                <td>{{ best_model.model_name }}</td>
+                <td>{{ best_model.model_status }}</td>
+                <td>
+                    <button id="button-{{ best_model.model_id }}" style="width: 100%;" 
+                            type="button" 
+                            onclick="window.location.href=`{{ url_for('predict', machine_id=machine_id, dataset_id=dataset_id, model_id=best_model.model_id) }}`;" 
+                            class="buttonFilled">
+                        Predict
+                    </button>
+                </td>
+            </tr>
+            <tr class="additional-info-row">
+                <td colspan="4">
+                    <strong>Dataset Type:</strong> {{ best_model.dataset_type }}<br>
+                    <strong>Columns Used:</strong> {{ ", ".join(best_model.columns_used) if best_model.columns_used else "[]" }}<br>
+                    <strong>R2 Score:</strong> {{ best_model.r2_score }}<br>
+                    <strong>Mean Absolute Error:</strong> {{ best_model.mean_absolute_error }}<br>
+                    <strong>Mean Squared Error:</strong> {{ best_model.mean_squared_error }}<br>
+                    <strong>Architecture:</strong> {{ best_model["architecture/hyper-parameters"] }}<br>
+                </td>
+            </tr>
+
+            {% for model in models[1:] %}
+                    <tr class="main-row other-models" style="display: none;">
+                        <td>{{ model.user_given_name }}</td>
+                        <td>{{ model.model_name }}</td>
+                        <td>{{ model.model_status }}</td>
+                        <td>
+                            <button id="button-{{ model.model_id }}" style="width: 100%;" 
+                                    type="button" 
+                                    onclick="window.location.href=`{{ url_for('predict', machine_id=machine_id, dataset_id=dataset_id, model_id=model.model_id) }}`;" 
+                                    class="buttonFilled">
+                                Predict
+                            </button>
+                        </td>
+                    </tr>
+                    <tr class="additional-info-row other-models" style="display: none;">
+                        <td colspan="4">
+                            <strong>Dataset Type:</strong> {{ model.dataset_type }}<br>
+                            <strong>Columns Used:</strong> {{ ", ".join(model.columns_used) if model.columns_used else "[]" }}<br>
+                            <strong>R2 Score:</strong> {{ model.r2_score }}<br>
+                            <strong>Mean Absolute Error:</strong> {{ model.mean_absolute_error }}<br>
+                            <strong>Mean Squared Error:</strong> {{ model.mean_squared_error }}<br>
+                            <strong>Architecture:</strong> {{ model["architecture/hyper-parameters"] }}<br>
+                        </td>
+                    </tr>
+                {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Show more button and hidden content -->
+    <button id="show-more-button" style="margin-top: 20px;">Show More</button>
+    <div id="graphs-container" style="display: none;">
+        <!-- Separate Graph Containers -->
+        <div id="r2-score-graph" style="margin-top: 20px;"></div>
+        <div id="mae-graph" style="margin-top: 20px;"></div>
+        <div id="mse-graph" style="margin-top: 20px;"></div>
+    </div>
+</div>
+
+<!-- Load Plotly -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<script>
+    document.getElementById('show-more-button').addEventListener('click', function() {
+        var container = document.getElementById('graphs-container');
+        container.style.display = 'block';
+        this.style.display = 'none'; // Hide the button after click
+
+        var otherModels = document.getElementsByClassName('other-models');
+        Array.from(otherModels).forEach(function(ele) {
+            ele.style.display = '';
+        });
+    });
+
+    // Get models data in JSON format from the template
+    var models = {{ models | tojson | safe }};
+    
+    // Check if any model is in the "Predicting" status
+    const isPredicting = models.some(model => model.model_status === "Predicting");
+    if (isPredicting) {
+        // Disable all buttons
+        document.querySelectorAll(".buttonFilled").forEach(button => button.disabled = true);
+        document.querySelectorAll("#train-button").forEach(button => button.disabled = false);
+        
+        // Find the model with "Predicting" status and change its button to "Stop"
+        models.forEach(model => {
+            if (model.model_status === "Predicting") {
+                const button = document.getElementById(`button-${model.model_id}`);
+                if (button) {
+                    button.disabled = false;
+                    button.textContent = "Stop";
+                    button.classList.add("stopButton"); // Optional: Add a class for styling
+                    button.onclick = () => {
+                        // Define stop action, e.g., redirect to a stop endpoint
+                        window.location.href = `/stop_prediction/{{machine_id}}/{{dataset_id}}/${model.model_id}`;
+                    };
+                }
+            }
+        });
+    }
+
+    // Prepare data for the graph from models, only including completed models
+    {% set models_json = models | tojson %}
+    models = {{ models_json | safe }};
+
+    // Filter models with status "Model training is completed ."
+    var completedModels = models.filter(model => model.model_status === "Model training is completed ." || model.model_status === "Prediction Stopped" || model.model_status === "Predicting");
+
+    completedModels.sort((a, b) => b.r2_score - a.r2_score); // Sort descending by R² Score
+
+    // Use model_id instead of model_name for x-axis labels
+    var modelIds = completedModels.map(model => model.user_given_name);
+    var r2Scores = completedModels.map(model => model.r2_score != null ? model.r2_score : 0);
+    var mae = completedModels.map(model => model.mean_absolute_error != null ? model.mean_absolute_error : 0);
+    var mse = completedModels.map(model => model.mean_squared_error != null ? model.mean_squared_error : 0);
+
+    // Plot R² Score Graph
+    var r2Data = [{ x: modelIds, y: r2Scores, type: 'bar', name: 'R² Score' }];
+    var r2Layout = { 
+        title: 'R² Score Comparison', 
+        xaxis: { 
+            title: 'Model IDs', 
+            automargin: true, 
+            tickangle: -45 
+        }, 
+        yaxis: { title: 'R² Score' },
+        height: 400, // Height of the graph
+        width: 800, // Increase width of the graph
+        showlegend: false, // Hide legend
+        dragmode: false, // Disable drag mode
+    };
+    Plotly.newPlot('r2-score-graph', r2Data, r2Layout);
+
+    completedModels.sort((a, b) => a.mean_absolute_error - b.mean_absolute_error); // Sort ascending by Mean Absolute Error
+    // Use model_id instead of model_name for x-axis labels
+    var modelIds = completedModels.map(model => model.user_given_name);
+    var r2Scores = completedModels.map(model => model.r2_score != null ? model.r2_score : 0);
+    var mae = completedModels.map(model => model.mean_absolute_error != null ? model.mean_absolute_error : 0);
+    var mse = completedModels.map(model => model.mean_squared_error != null ? model.mean_squared_error : 0);
+
+    // Plot Mean Absolute Error Graph
+    var maeData = [{ x: modelIds, y: mae, type: 'bar', name: 'Mean Absolute Error' }];
+    var maeLayout = { 
+        title: 'Mean Absolute Error Comparison', 
+        xaxis: { 
+            title: 'Model IDs', 
+            automargin: true, 
+            tickangle: -45 
+        }, 
+        yaxis: { title: 'Mean Absolute Error' },
+        height: 400, // Height of the graph
+        width: 800, // Increase width of the graph
+        showlegend: false, // Hide legend
+        dragmode: false, // Disable drag mode
+    };
+    Plotly.newPlot('mae-graph', maeData, maeLayout);
+
+    completedModels.sort((a, b) => a.mean_squared_error - b.mean_squared_error); // Sort ascending by Mean Absolute Error
+    // Use model_id instead of model_name for x-axis labels
+    var modelIds = completedModels.map(model => model.user_given_name);
+    var r2Scores = completedModels.map(model => model.r2_score != null ? model.r2_score : 0);
+    var mae = completedModels.map(model => model.mean_absolute_error != null ? model.mean_absolute_error : 0);
+    var mse = completedModels.map(model => model.mean_squared_error != null ? model.mean_squared_error : 0);
+
+    // Plot Mean Squared Error Graph
+    var mseData = [{ x: modelIds, y: mse, type: 'bar', name: 'Mean Squared Error' }];
+    var mseLayout = { 
+        title: 'Mean Squared Error Comparison', 
+        xaxis: { 
+            title: 'Model IDs', 
+            automargin: true, 
+            tickangle: -45 
+        }, 
+        yaxis: { title: 'Mean Squared Error' },
+        height: 400, // Height of the graph
+        width: 800, // Increase width of the graph
+        showlegend: false, // Hide legend
+        dragmode: false, // Disable drag mode
+    };
+    Plotly.newPlot('mse-graph', mseData, mseLayout);
+</script>
+
+
+{% endblock %}

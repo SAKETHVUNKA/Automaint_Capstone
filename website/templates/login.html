@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+<link href="{{ url_for('static', filename='login.css') }}" rel="stylesheet" />
+
+<div class="login-hero">
+  <div class="login-hero1 heroContainer">
+    <div class="login-container1">
+      <div class="login-container2">
+        <h1 class="login-hero-heading heading1">Login</h1>
+      </div>
+
+      <!-- Flash messages section -->
+      <div class="container">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class="flashes">
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+      </div>
+
+      <form method="POST"> <!-- action="{{ url_for('login') }}" -->
+        <input type="text" name="username" placeholder="Username" class="input" required />
+        <input type="password" name="password" placeholder="Password" class="input" required />
+        <button type="submit" class="buttonFilled">Login</button>
+      </form>
+      <button class="buttonFlat">Forgot Password?</button> <!-- TODO -->
+      <div class="login-btn-group"></div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

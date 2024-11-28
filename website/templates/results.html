@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Results{% endblock %}
+
+{% block content %}
+
+<link href="{{ url_for('static', filename='results.css') }}" rel="stylesheet" />
+
+<div class="machine-hero heroContainer">
+  <!-- First Table -->
+  <div class="table-container">
+    <table class="machine-table">
+      <thead>
+        <tr>
+          <th>Last Updated On</th>
+          <th>Remaining Useful Life</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>18-04-2024</td>
+          <td>360 hrs</td>
+          <td>Running</td>
+        </tr>
+        <!-- Add more rows as needed -->
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Notes Section -->
+  <div class="notes-container">
+    <p>Final Model Selected, Parameters Specific to Model, Additional Notes</p>
+  </div>
+
+  <!-- Second Table -->
+  <div class="table-container">
+    <table class="machine-table">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Accuracy</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+          <td>Model A</td>
+          <td>95.4%</td>
+        </tr>
+        <tr>
+          <td>Model B</td>
+          <td>89.7%</td>
+        </tr>
+        <tr>
+          <td>Model C</td>
+          <td>92.3%</td>
+        </tr>
+        <tr>
+          <td>Model D</td>
+          <td>88.1%</td>
+        </tr>
+        <tr>
+          <td>Model E</td>
+          <td>94.6%</td>
+        </tr>
+        <tr>
+          <td>Model F</td>
+          <td>91.2%</td>
+        </tr>
+        <tr>
+          <td>Model G</td>
+          <td>90.5%</td>
+        </tr>
+        <tr>
+          <td>Model H</td>
+          <td>93.8%</td>
+        </tr>
+        <tr>
+          <td>Model I</td>
+          <td>87.9%</td>
+        </tr>
+        <tr>
+          <td>Model J</td>
+          <td>96.1%</td>
+        </tr>
+        
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,273 @@
+{% extends 'base.html' %}
+
+{% block title %}Train Machine{% endblock %}
+
+{% block content %}
+
+<link href="{{ url_for('static', filename='train.css') }}" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.42.0/min/vs/monaco-editor.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js"></script>
+
+<div class="main-container">
+  <div class="form-container">
+    <div class="addmachine-container02">
+      <h1 class="addmachine-hero-heading heading1">
+        Train Details
+      </h1>
+    </div>
+
+    <form method="post">
+        <div>
+          <label for="userGivenName">Model Name:</label>
+          <input required type="text" id="userGivenName" name="userGivenName"/>
+          <br /><br />
+        </div>
+
+        <!-- Dropdown 2 -->
+        <div id="dataset-type-box">
+          <label for="datasetType">Select Dataset Type:</label>
+          <select required id="datasetType" name="datasetType">
+            <option value="cleaned">Cleaned</option>
+            <option value="preprocessed">Preprocessed</option>
+          </select>
+          <span class="tooltip-icon">?
+            <span class="tooltip-text">
+              1. *Cleaned Dataset*:  
+                <br>
+                This is your original dataset, which has been cleaned by:
+                - Removing any null values
+                - Scaling the numerical features
+                - Encoding the categorical features
+                <br>
+                If you select the cleaned dataset option, you will also have the ability to manually select the features to use for model training by viewing the *covariance matrix* of your dataset. This allows you to see how features relate to each other and choose the most relevant ones.
+                <br><br>
+              2. *Preprocessed Dataset*:  
+              <br>
+                This is an advanced version of the cleaned dataset where additional processing has been applied. In the preprocessed dataset:
+                - We automatically select the most relevant features.
+                - We generate new features and apply *lag features* to capture patterns over time.
+                <br>
+                If you select the preprocessed dataset, feature selection is automated for you, so you won’t be able to manually select features. This option provides a ready-to-use, enhanced dataset for training.
+            </span>
+          </span>
+          <br /><br />
+        </div>
+
+        <!-- Checkboxes -->
+        <div id="features-box">
+            <label>Select Features:</label><br />
+            {% for column in columns %}
+            <input type="checkbox" id="num_{{ column }}" name="num_{{ column }}" value="{{ column }}" />
+            <label for="num_{{ column }}">{{ column }}</label><br />
+            {% endfor %}
+            <br /><br />
+        </div>
+
+        <!-- Covariance Matrix -->
+        <div id="covariance-matrix">
+          <h3>Covariance Matrix:</h3>
+          <!-- Instead of embedding base64, we're using the SVG file URL from S3 -->
+          <img src="{{ png_image_url }}" alt="Covariance Matrix SVG" style="max-width: 100%; height: auto;" />
+        </div>
+        <br><br/>
+
+        <!-- Dropdown 2 -->
+        <div id="models-box">
+          <label for="modelType">Select Model Type:</label>
+          <select required id="modelType" name="modelType">
+            <option value="svr">SVR</option>
+            <option value="random_forest">Random Forest</option>
+            <option value="lstm">LSTM</option>
+            <option value="gradient_boost">Gradient Boost</option>
+            <option value="lgbm">Light GBM</option>
+            <option value="stacking">Stacked Model</option>
+            <option value="xg_boost">XG Boost</option>
+            <option value="gld_stack">GRU-LSTM-Dense</option>
+            <option value="lstm_modifiable">Configurable LSTM</option>
+            <option value="manual">Manual</option>
+          </select>
+          <br>
+        </div>
+
+      <!-- Additional options for Configurable LSTM -->
+      <div id="configurable-lstm-options" class="hidden">
+        <span class="tooltip-icon">i
+          <span class="tooltip-text">
+            Batch Normalization: Normalizes layer inputs to improve training speed and stability.
+            <br>
+            Dropout: Prevents overfitting by randomly deactivating neurons during training.
+            <br>
+            Number of LSTM Layers (1 - 8): Number of LSTM layers stacked for deeper temporal learning.
+            <br>
+            Number of Dense Layers (1 - 8): Number of fully connected layers for combining features and output prediction.
+          </span>
+        </span>
+        <br>
+        <br>
+
+        <label for="batchNormalization">Batch Normalization:</label>
+        <input type="checkbox" id="batchNormalization" name="batchNormalization" /><br /><br />
+
+        <label for="dropout">Dropout:</label>
+        <input type="checkbox" id="dropout" name="dropout" />
+        <div id="dropout-rate-box" class="hidden">
+          <label for="dropoutRate">Dropout Rate (0 - 1):</label>
+          <input type="number" id="dropoutRate" name="dropoutRate" step="0.1" min="0" max="1" />
+        </div>
+        <br /><br />
+
+        <label for="numLstmLayers">Number of LSTM Layers (1 - 8):</label>
+        <input type="number" id="numLstmLayers" name="numLstmLayers" min="1" max="8" /><br /><br />
+
+        <label for="numDenseLayers">Number of Dense Layers (1 - 8):</label>
+        <input type="number" id="numDenseLayers" name="numDenseLayers" min="1" max="8" /><br /><br />
+      </div>
+
+      <!-- Manual Code Input Box (Initially hidden) -->
+       <!-- Textarea for Custom Code when "Manual" is selected -->
+       <!-- <div id="manual-code-box" class="hidden">
+        <label for="manualCode">Custom Model Code:</label><br />
+        <label for="manualCode">No other modules can be used as they are currently unavailable </label><br />
+        <label for="manualCode">Follow the boilerpate given</label><br />
+        <br /><br />
+        <textarea id="manualCode" name="manualCode" rows="20" cols="60">{{ default_manual_code }}</textarea>
+        <br /><br />
+      </div> -->
+
+      <div id="manual-code-box" class="hidden">
+        <!-- <label for="manualCode">No other modules can be used as they are currently unavailable</label><br /> -->
+        <!-- <label for="manualCode">Follow the boilerplate given</label><br /><br> -->
+        <div class="note">
+          <p>Follow the boilerplate given</p>
+          <p>No other modules can be used as they are currently unavailable</p>
+          <p>Do not modify the columns which are being used [Do not generate new columns and make sure to use all the sensor data columns]</p>
+          <p>Make sure the columns ['unit_number','time_cycle_unit','RUL'] are not given as input features to the model you are training</p>
+          <p>Make sure all the elements mentioned in the return statement template are returned and in the same order</p>
+        </div>
+        <br />
+
+        <label for="manualCode">Custom Model Code:</label><br />
+        <textarea id="manualCode" name="manualCode" rows="40" cols="60">{{ default_manual_code }}</textarea>
+        <br /><br />
+      </div>
+
+      <!-- Add Button 1 -->
+      <button class="addmachine-hero-button1 buttonFilled" style="width: 30%; margin-left: 35%;" type="submit" id="add-button-1">Train</button>
+      <br /><br />
+    </form>
+
+  </div>
+</div>
+
+<script>
+
+  document.getElementById('modelType').addEventListener('change', function() {
+      var selectedModel = this.value;
+      var manualCodeBox = document.getElementById('manual-code-box');
+      var lstmOptions = document.getElementById('configurable-lstm-options');
+
+      if (selectedModel === 'manual') {
+        manualCodeBox.style.display = 'block';
+        lstmOptions.classList.add('hidden');
+      } else if (selectedModel === 'lstm_modifiable') {
+        manualCodeBox.style.display = 'none';
+        lstmOptions.classList.remove('hidden');
+      } else {
+        manualCodeBox.style.display = 'none';
+        lstmOptions.classList.add('hidden');
+      }
+    });
+
+    // Show/hide the dropout rate input based on the dropout checkbox
+    document.getElementById('dropout').addEventListener('change', function() {
+      var dropoutRateBox = document.getElementById('dropout-rate-box');
+      if (this.checked) {
+        dropoutRateBox.classList.remove('hidden');
+      } else {
+        dropoutRateBox.classList.add('hidden');
+      }
+    });
+
+  // Function to hide and clear features when 'preprocessed' is selected
+  document.getElementById('datasetType').addEventListener('change', function() {
+    var selectedValue = this.value;
+    var featuresBox = document.getElementById('features-box');
+    var covmatBox = document.getElementById('covariance-matrix');
+
+    if (selectedValue === 'preprocessed') {
+      featuresBox.classList.add('hidden');
+      covmatBox.classList.add('hidden');
+      var checkboxes = featuresBox.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(function(checkbox) {
+        checkbox.checked = false;
+      });
+    } else {
+      featuresBox.classList.remove('hidden');
+      covmatBox.classList.remove('hidden');
+    }
+  });
+
+  // Function to show/hide the manual code input when 'Manual' is selected in the modelType dropdown
+  document.getElementById('modelType').addEventListener('change', function() {
+    var selectedModel = this.value;
+    var manualCodeBox = document.getElementById('manual-code-box');
+
+    if (selectedModel === 'manual') {
+      manualCodeBox.style.display = 'block';  // Show the manual code input
+    } else {
+      manualCodeBox.style.display = 'none';   // Hide the manual code input
+    }
+  });
+
+  // document.addEventListener('DOMContentLoaded', function() {
+  //   var codeMirrorEditor = CodeMirror.fromTextArea(document.getElementById('manualCode'), {
+  //     lineNumbers: true,
+  //     mode: 'python',
+  //     theme: 'default', // You can change to a different theme if desired
+  //     indentUnit: 4,
+  //     tabSize: 4,
+  //     matchBrackets: true
+  //   });
+  // });
+
+  document.addEventListener('DOMContentLoaded', function() {
+  var manualCodeBox = document.getElementById('manual-code-box');
+  var codeMirrorEditor;
+
+  function initializeCodeMirror() {
+    if (!codeMirrorEditor) {
+      codeMirrorEditor = CodeMirror.fromTextArea(document.getElementById('manualCode'), {
+        lineNumbers: true,
+        mode: 'python',
+        theme: 'default', // You can change to a different theme if desired
+        indentUnit: 4,
+        tabSize: 4,
+        matchBrackets: true
+      });
+    }
+  }
+
+  document.getElementById('modelType').addEventListener('change', function() {
+    var selectedModel = this.value;
+
+    if (selectedModel === 'manual') {
+      manualCodeBox.style.display = 'block'; // Show the manual code input
+      initializeCodeMirror(); // Initialize CodeMirror when the box is shown
+    } else {
+      manualCodeBox.style.display = 'none'; // Hide the manual code input
+    }
+  });
+
+  // Initialize CodeMirror if 'manual' is pre-selected (optional, for page reloads)
+  if (document.getElementById('modelType').value === 'manual') {
+    manualCodeBox.style.display = 'block';
+    initializeCodeMirror();
+  }
+});
+
+</script> 
+
+{% endblock %}

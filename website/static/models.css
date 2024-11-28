@@ -1,0 +1,70 @@
+.table-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 10vh;
+    flex: 1;
+    overflow: auto;
+}
+
+.button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+.buttonFilled:disabled {
+    background-color: #cccccc; /* Light grey color */
+    color: #666666; /* Darker grey for text */
+    cursor: not-allowed; /* Changes cursor to indicate it's disabled */
+    opacity: 0.6; /* Optional: to give a disabled look */
+}
+
+.model-table {
+    width: 80%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.model-table th, .model-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.model-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+
+.model-table tr:hover {
+    background-color: #ddd;
+}
+
+/* Style for the additional information row with smooth animation */
+.additional-info-row {
+  display: none;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.4s ease-out, opacity 0.4s ease;
+  font-size: 14px;
+  color: #555;
+  background-color: #f9f9f9;
+}
+
+.main-row:hover + .additional-info-row {
+  display: table-row;
+  max-height: 200px; /* Set a max-height that's enough for content */
+  opacity: 1;
+}

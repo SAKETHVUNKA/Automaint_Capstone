@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<link href="{{ url_for('static', filename='dash.css') }}" rel="stylesheet" />
+
+<div class="table-container">
+  
+  <!-- Flash messages section -->
+  <div class="container">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flashes">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <button type="button" style="margin-left: 65%;" onclick="window.location.href=`{{ url_for('add_machine') }}`;" class="buttonFilled">Add Machine</button>
+  {% if not machinesArray %}
+    <h1>No machines for now, let's get started! ↗️</h1>
+  {% else %}
+  <table class="machine-table">
+    <thead>
+      <tr>
+        <th>Machine</th>
+        <th>Date Added</th>
+        <th>RUL</th>
+        <th></th>
+      </tr>
+    </thead>
+    {% for machineDict in machinesArray %}
+    <tbody>
+      <tr>
+        <td>{{ machineDict['machine_name'] }}</td>
+        <td>{{ machineDict['created_date'] }}</td>
+        <td>{{ machineDict['rul'] }}</td>
+        <td>
+          <button style="width: 100%;" type="button" onclick="window.location.href=`{{ url_for('datasets', machine_id=machineDict['machine_id']) }}`;" class="buttonFilled">Datasets</button>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</div>
+
+{% endblock %}
