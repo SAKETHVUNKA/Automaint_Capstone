@@ -148,7 +148,7 @@ def func1(user_data):
     return on_message
 
 def update_status(user_id, machine_id, rul, new_status):
-    firebase_update_url = 'PUT FIREBASE UPDATE LAMBDA URL'
+    firebase_update_url = 'https://kbkt311nic.execute-api.ap-south-1.amazonaws.com/default/firebase-update-automaint'
     payload = {
             'user_id': user_id,
             'machine_id': machine_id,
@@ -172,7 +172,7 @@ def main():
 
         # Download json_2
         s3_client = boto3.client('s3')
-        json_file_obj = s3_client.get_object(Bucket="PUT MODELS BUCKET NAME", Key=args.model_json_key)
+        json_file_obj = s3_client.get_object(Bucket="ml-models-trained-automaint", Key=args.model_json_key)
         json_file_content = json_file_obj['Body'].read().decode('utf-8')
         metadata = json.loads(json_file_content)
         user_id = metadata.get('user_id')
@@ -188,7 +188,7 @@ def main():
         extension = model_name.split(".")[-1]
         local_model_file_name = f"model.{extension}"
 
-        s3_client.download_file("PUT MODELS BUCKET NAME", model_name, local_model_file_name)
+        s3_client.download_file("ml-models-trained-automaint", model_name, local_model_file_name)
         if extension == "h5":
             model = load_model(local_model_file_name)
         elif extension == "joblib":
@@ -211,12 +211,12 @@ def main():
             print("isolation-forest model downloaded")
 
         # MQTT connection details
-        CLIENT_ID = "MQTT IOT CORE CLIENT ID"
-        ENDPOINT = "AWS IOT CORE ENDPOINT"
+        CLIENT_ID = f"{user_id}_{model_id}" 
+        ENDPOINT = "a32052tf0w5nxl-ats.iot.ap-south-1.amazonaws.com"
         TOPIC = args.mqtt_topic
-        CERT_PATH = "CETIFUCATE PATH"
-        KEY_PATH = "KEY PATH"
-        ROOT_CA_PATH = "ROOT CA PATH"
+        CERT_PATH = "./certificate_iot_core.pem.crt"
+        KEY_PATH = "./private_key_iot_core.pem.key"
+        ROOT_CA_PATH = "./root_ca_iot_core.pem"
 
         # Initialize MQTT client
         mqtt_client = AWSIoTMQTTClient(CLIENT_ID)
@@ -247,7 +247,7 @@ def main():
         # Keep the script running to listen for messages
         update_status(user_id, actual_machine_id, "NA", "Predicting")
 
-        firebase_update_url = 'PUT FIREBASE UPDATE LAMBDA URL'
+        firebase_update_url = 'https://kbkt311nic.execute-api.ap-south-1.amazonaws.com/default/firebase-update-automaint'
         payload = {
                 'user_id': user_id,
                 'machine_id': unique_key,
